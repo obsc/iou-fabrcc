@@ -2,7 +2,7 @@ package graph
 
 // Type representing a graph
 type Graph struct {
-	nodes map[Id]*Node
+	nodes map[PersonId]*Node
 }
 
 // Type representing a node
@@ -22,7 +22,7 @@ type DiEdge struct {
 
 // Initializes a new graph
 func NewGraph() *Graph {
-	return &Graph{make(map[Id]*Node)}
+	return &Graph{make(map[PersonId]*Node)}
 }
 
 // Constructs a new node from a person
