@@ -25,3 +25,14 @@ func IterUsers(fn func(user User)) error {
 
 	return iter.Close()
 }
+
+func AddUser(user User) {
+	room.users.Insert(user)
+}
+
+func AddUserByName(name string) {
+	AddUser(User{
+		Id:   bson.NewObjectId(),
+		Name: name,
+	})
+}

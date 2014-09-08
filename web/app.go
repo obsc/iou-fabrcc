@@ -22,7 +22,7 @@ var App *WebApp = newWebApp()
 
 func (app *WebApp) SetRoutes() {
 	// request multiplexer
-	app.Router.HandleFunc("/new/user/{name}/", newUser).Name("newUser")
+	app.Router.HandleFunc("/new/user/{name}", newUser).Name("newUser")
 	app.Router.HandleFunc("/", index).Name("index")
 }
 
@@ -37,5 +37,8 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func newUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, mux.Vars(r)["name"])
+	var name string = mux.Vars(r)["name"]
+	db.AddUserByName(name)
+
+	fmt.Fprintln(w, "Added new user: ", name)
 }
