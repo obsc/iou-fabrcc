@@ -13,8 +13,10 @@ type Room struct {
 	Transactions *mgo.Collection
 }
 
-// Returns a new room
-func InitRoom(uri string) Room {
+var ROOM Room
+
+// Initializes a new room
+func InitRoom(uri string) {
 	sess, err := mgo.Dial(uri)
 	if err != nil {
 		fmt.Printf("Can't connect to mongo, go error: %v\n", err)
@@ -35,10 +37,10 @@ func InitRoom(uri string) Room {
 
 	fmt.Println("Connected to mongohq")
 
-	return Room{sess, fabrcc, users, transactions}
+	ROOM = Room{sess, fabrcc, users, transactions}
 }
 
 // Closes the room
-func CloseRoom(room Room) {
-	room.sess.Close()
+func CloseRoom() {
+	ROOM.sess.Close()
 }
