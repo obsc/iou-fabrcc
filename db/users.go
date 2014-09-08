@@ -5,9 +5,13 @@ import (
 )
 
 type User struct {
-	Id   bson.ObjectId "_id"
-	Name string        "name"
+	Id   bson.ObjectId            "_id"
+	Name string                   "name"
+	In   map[bson.ObjectId]DiEdge "in"
+	Out  map[bson.ObjectId]DiEdge "out"
 }
+
+type DiEdge []bson.ObjectId
 
 func GetUsers(limit int) []User {
 	results := []User{}
@@ -34,5 +38,7 @@ func AddUserByName(name string) {
 	AddUser(User{
 		Id:   bson.NewObjectId(),
 		Name: name,
+		In:   nil,
+		Out:  nil,
 	})
 }
