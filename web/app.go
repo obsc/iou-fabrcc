@@ -22,6 +22,7 @@ var App *WebApp = newWebApp()
 
 func (app *WebApp) SetRoutes() {
 	// request multiplexer
+	app.Router.HandleFunc("/new/user/{name}/", newUser).Name("newUser")
 	app.Router.HandleFunc("/", index).Name("index")
 }
 
@@ -30,6 +31,11 @@ func (app *WebApp) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	count, _ := db.ROOM.Users.Count()
-	fmt.Fprintln(w, "hello world!", count)
+	db.IterUsers(func(user db.User) {
+		fmt.Fprintln(w, user.Name)
+	})
+}
+
+func newUser(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, mux.Vars(r)["name"])
 }

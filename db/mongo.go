@@ -9,11 +9,12 @@ import (
 type Room struct {
 	sess         *mgo.Session
 	fabrcc       *mgo.Database
-	Users        *mgo.Collection
-	Transactions *mgo.Collection
+	users        *mgo.Collection
+	transactions *mgo.Collection
+	graph        *mgo.Collection
 }
 
-var ROOM Room
+var room Room
 
 // Initializes a new room
 func InitRoom(uri string) {
@@ -32,15 +33,18 @@ func InitRoom(uri string) {
 
 	sess.SetSafe(&mgo.Safe{})
 	fabrcc := sess.DB("iou-fabrcc")
-	users := fabrcc.C("users")
-	transactions := fabrcc.C("transactions")
+
+	room = Room{
+		sess:         sess,
+		fabrcc:       fabrcc,
+		users:        fabrcc.C("users"),
+		transactions: fabrcc.C("transactions"),
+		graph:        fabrcc.C("graph")}
 
 	fmt.Println("Connected to mongohq")
-
-	ROOM = Room{sess, fabrcc, users, transactions}
 }
 
 // Closes the room
 func CloseRoom() {
-	ROOM.sess.Close()
+	room.sess.Close()
 }
