@@ -3,6 +3,14 @@
 	"GoVersion": "go1.3.1",
 	"Deps": [
 		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "14f550f51af52180c2eefed15e5fd18d63c0a64a"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": "4b8fbc56f3b2400a7c7ea3dba9b3539787c486b6"
+		},
+		{
 			"ImportPath": "gopkg.in/mgo.v2",
 			"Rev": "c9fd3712fbf3e92924c974dce16da2d322508fe2"
 		}
