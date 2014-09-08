@@ -17,7 +17,9 @@ type Transaction struct {
 
 func GetTransactions(query interface{}, limit int) []Transaction {
 	results := []Transaction{}
-	room.transactions.Find(query).Limit(limit).All(&results)
+	err := room.transactions.Find(query).Limit(limit).All(&results)
+	handleError(err)
+
 	return results
 }
 
@@ -33,7 +35,9 @@ func IterTransactions(query interface{}, fn func(Transaction)) error {
 }
 
 func AddTransaction(transaction Transaction) {
-	room.transactions.Insert(transaction)
+	err := room.transactions.Insert(transaction)
+	handleError(err)
+
 	UpdateUserTransaction(transaction.Id, transaction.SourceId, transaction.SinkId)
 }
 

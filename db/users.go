@@ -18,7 +18,9 @@ type DiEdge []bson.ObjectId
 
 func GetUsers(query interface{}, limit int) []User {
 	results := []User{}
-	room.users.Find(query).Limit(limit).All(&results)
+	err := room.users.Find(query).Limit(limit).All(&results)
+	handleError(err)
+
 	return results
 }
 
@@ -34,7 +36,8 @@ func IterUsers(query interface{}, fn func(User)) error {
 }
 
 func AddUser(user User) {
-	room.users.Insert(user)
+	err := room.users.Insert(user)
+	handleError(err)
 }
 
 func AddUserByName(name string) {
@@ -48,11 +51,15 @@ func AddUserByName(name string) {
 }
 
 func UpdateUserTransaction(trans bson.ObjectId, s bson.ObjectId, t bson.ObjectId) {
-	room.users.UpdateId(s, bson.M{
+	err := room.users.UpdateId(s, bson.M{
 		"$push": bson.M{"out." + t.String(): trans}})
-	room.users.UpdateId(s, updateTimeQuery)
+	handleError(err)
+	err = room.users.UpdateId(s, updateTimeQuery)
+	handleError(err)
 
-	room.users.UpdateId(t, bson.M{
+	err = room.users.UpdateId(t, bson.M{
 		"$push": bson.M{"in." + s.String(): trans}})
-	room.users.UpdateId(t, updateTimeQuery)
+	handleError(err)
+	err = room.users.UpdateId(t, updateTimeQuery)
+	handleError(err)
 }
