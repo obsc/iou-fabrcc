@@ -31,7 +31,7 @@ func (app *WebApp) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	db.IterUsers(func(user db.User) {
+	db.IterUsers(nil, func(user db.User) {
 		fmt.Fprintln(w, user.Name)
 	})
 }
