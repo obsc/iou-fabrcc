@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 	"os"
 )
 
@@ -15,6 +16,8 @@ type Room struct {
 }
 
 var room Room
+
+var updateTimeQuery = bson.M{"$set": bson.M{"updatedAt": bson.Now()}}
 
 // Initializes a new room
 func InitRoom(uri string) {

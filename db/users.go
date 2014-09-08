@@ -2,26 +2,29 @@ package db
 
 import (
 	"gopkg.in/mgo.v2/bson"
+	"time"
 )
 
 type User struct {
-	Id   bson.ObjectId            "_id"
-	Name string                   "name"
-	In   map[bson.ObjectId]DiEdge "in"
-	Out  map[bson.ObjectId]DiEdge "out"
+	Id        bson.ObjectId            "_id"
+	Name      string                   "name"
+	In        map[bson.ObjectId]DiEdge "in"
+	Out       map[bson.ObjectId]DiEdge "out"
+	CreatedAt time.Time                "createdAt"
+	UpdatedAt time.Time                "updatedAt"
 }
 
 type DiEdge []bson.ObjectId
 
-func GetUsers(limit int) []User {
+func GetUsers(query interface{}, limit int) []User {
 	results := []User{}
-	room.users.Find(nil).Limit(limit).All(&results)
+	room.users.Find(query).Limit(limit).All(&results)
 	return results
 }
 
-func IterUsers(fn func(user User)) error {
+func IterUsers(query interface{}, fn func(User)) error {
 	result := User{}
-	iter := room.users.Find(nil).Iter()
+	iter := room.users.Find(query).Iter()
 
 	for iter.Next(&result) {
 		fn(result)
@@ -36,9 +39,20 @@ func AddUser(user User) {
 
 func AddUserByName(name string) {
 	AddUser(User{
-		Id:   bson.NewObjectId(),
-		Name: name,
-		In:   nil,
-		Out:  nil,
-	})
+		Id:        bson.NewObjectId(),
+		Name:      name,
+		In:        nil,
+		Out:       nil,
+		CreatedAt: bson.Now(),
+		UpdatedAt: bson.Now()})
+}
+
+func UpdateUserTransaction(trans bson.ObjectId, s bson.ObjectId, t bson.ObjectId) {
+	room.users.UpdateId(s, bson.M{
+		"$push": bson.M{"out." + t.String(): trans}})
+	room.users.UpdateId(s, updateTimeQuery)
+
+	room.users.UpdateId(t, bson.M{
+		"$push": bson.M{"in." + s.String(): trans}})
+	room.users.UpdateId(t, updateTimeQuery)
 }
