@@ -6,20 +6,20 @@ import (
 )
 
 type User struct {
-	Id        bson.ObjectId            "_id"
-	Name      string                   "name"
-	In        map[bson.ObjectId]DiEdge "in"
-	Out       map[bson.ObjectId]DiEdge "out"
-	CreatedAt time.Time                "createdAt"
-	UpdatedAt time.Time                "updatedAt"
+	Id        bson.ObjectId               "_id"
+	Name      string                      "name"
+	In        map[bson.ObjectId]TransList "in"
+	Out       map[bson.ObjectId]TransList "out"
+	CreatedAt time.Time                   "createdAt"
+	UpdatedAt time.Time                   "updatedAt"
 }
 
-type DiEdge []bson.ObjectId
+type TransList []bson.ObjectId
 
 func GetUsers(query interface{}, limit int) []User {
 	results := []User{}
 	err := room.users.Find(query).Limit(limit).All(&results)
-	handleError(err)
+	logError(err)
 
 	return results
 }
@@ -37,7 +37,7 @@ func IterUsers(query interface{}, fn func(User)) error {
 
 func AddUser(user User) {
 	err := room.users.Insert(user)
-	handleError(err)
+	logError(err)
 }
 
 func AddUserByName(name string) {
@@ -53,13 +53,13 @@ func AddUserByName(name string) {
 func UpdateUserTransaction(trans bson.ObjectId, s bson.ObjectId, t bson.ObjectId) {
 	err := room.users.UpdateId(s, bson.M{
 		"$push": bson.M{"out." + t.String(): trans}})
-	handleError(err)
+	logError(err)
 	err = room.users.UpdateId(s, updateTimeQuery)
-	handleError(err)
+	logError(err)
 
 	err = room.users.UpdateId(t, bson.M{
 		"$push": bson.M{"in." + s.String(): trans}})
-	handleError(err)
+	logError(err)
 	err = room.users.UpdateId(t, updateTimeQuery)
-	handleError(err)
+	logError(err)
 }

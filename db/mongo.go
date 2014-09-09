@@ -20,7 +20,7 @@ var room Room
 
 var updateTimeQuery = bson.M{"$set": bson.M{"updatedAt": bson.Now()}}
 
-func handleError(err error) {
+func logError(err error) {
 	if err != nil {
 		log.Println(err)
 	}
