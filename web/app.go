@@ -44,9 +44,13 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func users(w http.ResponseWriter, r *http.Request) {
-	db.IterUsers(nil, func(user db.User) {
-		fmt.Fprintln(w, user.Name)
-	})
+	graph := db.GetGraph()
+	userNameMap := db.GetUserNameMap(nil)
+
+	for id, node := range graph.Nodes {
+		fmt.Fprintf(w, "%s          %s: %s\n",
+			id, userNameMap[node.Id], moneyFilter(node.Worth))
+	}
 }
 
 func newUser(w http.ResponseWriter, r *http.Request) {
@@ -74,6 +78,10 @@ func newTransaction(w http.ResponseWriter, r *http.Request) {
 
 	if source != sink && bson.IsObjectIdHex(source) && bson.IsObjectIdHex(sink) {
 		value, err := strconv.Atoi(valuestr)
+		if value < 0 {
+			value = -value
+			source, sink = sink, source
+		}
 		if err == nil && reason != "" {
 			db.AddTransactionByData(bson.ObjectIdHex(source), bson.ObjectIdHex(sink), value, reason)
 		}

@@ -35,12 +35,14 @@ func IterTransactions(query interface{}, fn func(Transaction)) error {
 }
 
 func AddTransaction(transaction Transaction) {
-	err := room.transactions.Insert(transaction)
-	logError(err)
+	if validTransaction(transaction) {
+		err := room.transactions.Insert(transaction)
+		logError(err)
 
-	UpdateUserTransaction(transaction.Id, transaction.SourceId, transaction.SinkId)
+		UpdateUserTransaction(transaction.Id, transaction.SourceId, transaction.SinkId)
 
-	GraphAddTransaction(transaction)
+		GraphAddTransaction(transaction)
+	}
 }
 
 func AddTransactionByData(s bson.ObjectId, t bson.ObjectId, v int, r string) {
@@ -52,4 +54,13 @@ func AddTransactionByData(s bson.ObjectId, t bson.ObjectId, v int, r string) {
 		Reason:    r,
 		CreatedAt: bson.Now(),
 		UpdatedAt: bson.Now()})
+}
+
+func validTransaction(transaction Transaction) bool {
+	count1, err1 := room.users.FindId(transaction.SourceId).Count()
+	count2, err2 := room.users.FindId(transaction.SinkId).Count()
+	if err1 != nil || err2 != nil || count1 == 0 || count2 == 0 {
+		return false
+	}
+	return true
 }
