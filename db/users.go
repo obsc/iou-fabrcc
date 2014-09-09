@@ -6,12 +6,12 @@ import (
 )
 
 type User struct {
-	Id        bson.ObjectId               "_id"
-	Name      string                      "name"
-	In        map[bson.ObjectId]TransList "in"
-	Out       map[bson.ObjectId]TransList "out"
-	CreatedAt time.Time                   "createdAt"
-	UpdatedAt time.Time                   "updatedAt"
+	Id        bson.ObjectId        "_id"
+	Name      string               "name"
+	In        map[string]TransList "in"
+	Out       map[string]TransList "out"
+	CreatedAt time.Time            "createdAt"
+	UpdatedAt time.Time            "updatedAt"
 }
 
 type TransList []bson.ObjectId
@@ -61,13 +61,13 @@ func AddUserByName(name string) {
 
 func UpdateUserTransaction(trans bson.ObjectId, s bson.ObjectId, t bson.ObjectId) {
 	err := room.users.UpdateId(s, bson.M{
-		"$push": bson.M{"out." + t.String(): trans}})
+		"$push": bson.M{"out." + t.Hex(): trans}})
 	logError(err)
 	err = room.users.UpdateId(s, updateTimeQuery)
 	logError(err)
 
 	err = room.users.UpdateId(t, bson.M{
-		"$push": bson.M{"in." + s.String(): trans}})
+		"$push": bson.M{"in." + s.Hex(): trans}})
 	logError(err)
 	err = room.users.UpdateId(t, updateTimeQuery)
 	logError(err)

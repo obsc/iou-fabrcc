@@ -60,7 +60,7 @@ func transactions(w http.ResponseWriter, r *http.Request) {
 	userNameMap := db.GetUserNameMap(nil)
 
 	db.IterTransactions(nil, func(trans db.Transaction) {
-		fmt.Fprintf(w, "%s owes %s %s because of: %s",
+		fmt.Fprintf(w, "%s owes %s %s because of: %s\n",
 			userNameMap[trans.SourceId], userNameMap[trans.SinkId],
 			moneyFilter(trans.Value), trans.Reason)
 	})

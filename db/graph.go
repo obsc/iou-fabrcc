@@ -6,16 +6,16 @@ import (
 )
 
 type Graph struct {
-	Id        bson.ObjectId          "_id"
-	Nodes     map[bson.ObjectId]Node "nodes"
-	CreatedAt time.Time              "createdAt"
-	UpdatedAt time.Time              "updatedAt"
+	Id        bson.ObjectId   "_id"
+	Nodes     map[string]Node "nodes"
+	CreatedAt time.Time       "createdAt"
+	UpdatedAt time.Time       "updatedAt"
 }
 
 type Node struct {
-	Id    bson.ObjectId          "userId"
-	Worth int                    "worth"
-	Edges map[bson.ObjectId]Edge "edges"
+	Id    bson.ObjectId   "userId"
+	Worth int             "worth"
+	Edges map[string]Edge "edges"
 }
 
 type Edge struct {
@@ -23,11 +23,9 @@ type Edge struct {
 }
 
 func InitGraph() Graph {
-	nodes := make(map[bson.ObjectId]Node)
-
 	graph := Graph{
 		Id:        bson.NewObjectId(),
-		Nodes:     nodes,
+		Nodes:     nil,
 		CreatedAt: bson.Now(),
 		UpdatedAt: bson.Now()}
 
@@ -49,45 +47,47 @@ func GetGraph() Graph {
 	} else {
 		result := Graph{}
 		room.graph.Find(nil).One(&result)
+
 		return result
 	}
 }
 
 func GraphAddUser(user User) {
+	graph := GetGraph()
 	node := Node{
 		Id:    user.Id,
 		Worth: 0,
-		Edges: make(map[bson.ObjectId]Edge)}
+		Edges: nil}
 
-	err := room.graph.Update(nil, bson.M{
-		"$set": bson.M{"nodes." + user.Id.String(): node, "updatedAt": bson.Now()}})
+	err := room.graph.UpdateId(graph.Id, bson.M{
+		"$set": bson.M{"nodes." + user.Id.Hex(): node, "updatedAt": bson.Now()}})
 
 	logError(err)
 }
 
 func GraphAddTransaction(transaction Transaction) {
 	graph := GetGraph()
-	source := graph.Nodes[transaction.SourceId]
-	sink := graph.Nodes[transaction.SinkId]
+	source := graph.Nodes[transaction.SourceId.Hex()]
+	sink := graph.Nodes[transaction.SinkId.Hex()]
 
 	sourceEdge := Edge{
-		Value: source.Edges[transaction.SinkId].Value - transaction.Value}
+		Value: source.Edges[transaction.SinkId.Hex()].Value - transaction.Value}
 	sourceWorth := source.Worth - transaction.Value
 
 	sinkEdge := Edge{
-		Value: sink.Edges[transaction.SourceId].Value + transaction.Value}
+		Value: sink.Edges[transaction.SourceId.Hex()].Value + transaction.Value}
 	sinkWorth := sink.Worth + transaction.Value
 
-	sourceString := "nodes." + transaction.SourceId.String() + "."
-	sinkString := "nodes." + transaction.SinkId.String() + "."
+	sourceString := "nodes." + transaction.SourceId.Hex() + "."
+	sinkString := "nodes." + transaction.SinkId.Hex() + "."
 
-	err := room.graph.Update(nil, bson.M{
+	err := room.graph.UpdateId(graph.Id, bson.M{
 		"$set": bson.M{
-			sourceString + "edges." + transaction.SinkId.String(): sourceEdge,
-			sourceString + "worth":                                sourceWorth,
-			sinkString + "edges." + transaction.SourceId.String(): sinkEdge,
-			sinkString + "worth":                                  sinkWorth,
-			"updatedAt":                                           bson.Now()}})
+			sourceString + "edges." + transaction.SinkId.Hex(): sourceEdge,
+			sourceString + "worth":                             sourceWorth,
+			sinkString + "edges." + transaction.SourceId.Hex(): sinkEdge,
+			sinkString + "worth":                               sinkWorth,
+			"updatedAt":                                        bson.Now()}})
 
 	logError(err)
 }
