@@ -35,8 +35,17 @@ func IterUsers(query interface{}, fn func(User)) error {
 	return iter.Close()
 }
 
+func GetUserNameMap(query interface{}) map[bson.ObjectId]string {
+	m := make(map[bson.ObjectId]string)
+	IterUsers(query, func(user User) {
+		m[user.Id] = user.Name
+	})
+	return m
+}
+
 func AddUser(user User) {
 	err := room.users.Insert(user)
+	GraphAddUser(user)
 	logError(err)
 }
 

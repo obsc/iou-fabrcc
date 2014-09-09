@@ -39,6 +39,8 @@ func AddTransaction(transaction Transaction) {
 	logError(err)
 
 	UpdateUserTransaction(transaction.Id, transaction.SourceId, transaction.SinkId)
+
+	GraphAddTransaction(transaction)
 }
 
 func AddTransactionByData(s bson.ObjectId, t bson.ObjectId, v int, r string) {
