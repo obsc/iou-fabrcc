@@ -18,7 +18,7 @@ type TransList []bson.ObjectId
 
 func GetUsers(query interface{}, limit int) []User {
 	results := []User{}
-	err := room.users.Find(query).Limit(limit).All(&results)
+	err := room.users.Find(query).Sort("-createdAt").Limit(limit).All(&results)
 	logError(err)
 
 	return results
@@ -26,7 +26,7 @@ func GetUsers(query interface{}, limit int) []User {
 
 func IterUsers(query interface{}, fn func(User)) error {
 	result := User{}
-	iter := room.users.Find(query).Iter()
+	iter := room.users.Find(query).Sort("-createdAt").Iter()
 
 	for iter.Next(&result) {
 		fn(result)

@@ -17,7 +17,7 @@ type Transaction struct {
 
 func GetTransactions(query interface{}, limit int) []Transaction {
 	results := []Transaction{}
-	err := room.transactions.Find(query).Limit(limit).All(&results)
+	err := room.transactions.Find(query).Sort("-updatedAt").Limit(limit).All(&results)
 	logError(err)
 
 	return results
@@ -25,7 +25,7 @@ func GetTransactions(query interface{}, limit int) []Transaction {
 
 func IterTransactions(query interface{}, fn func(Transaction)) error {
 	result := Transaction{}
-	iter := room.transactions.Find(query).Iter()
+	iter := room.transactions.Find(query).Sort("-updatedAt").Iter()
 
 	for iter.Next(&result) {
 		fn(result)
