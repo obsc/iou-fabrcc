@@ -1,6 +1,3 @@
-var username;
-var password;
-
 function listTransactions(transactions) {
 
 	// one placeholder row for a new one
@@ -17,35 +14,54 @@ function listTransactions(transactions) {
 	}
 }
 
+// Login Menu functions
 function login() {
 
 	$("#login").fadeTo(300, 0);
 
-	// Identify the user from fields
-	username = $("#username").val();
-	password = $("#password").val();
-
 	// Load transaction information
 	var transactions, graphs;
-	$.get("/transactions/json", username, function (data) { listTransactions(data); });
-	$.get("/graphs/json", username, function (data) { graphs=data; });
+	$.get("/transactions/json", function (data) { transactions = data; });
+	console.log(transactions);
+	$.get("/graph/json", function (data) { graphs=data; });
+	console.log(graphs);
 
-	// Reveal transaction information
+	setTimeout(showContent, 300);
 }
 
 function register() {
 
 	$("#login").fadeTo(300, 0);
 
-	// Identify the user from fields
-	username = $("#username").val();
-	password = $("#password").val();
-
 	// POST new user info
-	$.post("/users/new", username, function (data) {console.log(data);});
+	user = {
+		name : $("#username").val()
+	};
+	$.post("/users/new", user, function (data) {console.log(data);});
+
+	// Load transaction information
+	var transactions, graphs;
+	$.get("/transactions/json", function (data) { transactions = data; });
+	console.log(transactions);
+	$.get("/graph/json", function (data) { graphs=data; });
+	console.log(graphs);
+
+	setTimeout(showContent, 300);
+}
+
+function showContent() {
+	$('#login').toggleClass('hidden');
+	$('#content').toggleClass('hidden');
 }
 
 function newTransaction() {
+
+	transaction = {
+		source : sourceId,
+		sink : sinkId,
+		value : value,
+		reason : reason
+	};
 
 	$.post("transactions/new", function (data) { listTransactions(data); });
 
