@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>FABRCC</title>
+		<link rel="stylesheet" href="/styles/index.css" type="text/css"/>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script src="/js/index.js"></script>
+	</head>
+	<body>
+		<div id="user">
+			<form id="login" onSubmit="return false;">
+				<label for="username">Username: </label>
+				<input id="username" class="field" >
+				<br>
+				<label for="password">Password: </label>
+				<input id="password" class="field" type="password">
+				<br>
+				<input id="login_btn" type="submit" value="Login" onClick="login()">
+				<input id="register_btn" type="submit" value="Register" onClick="register()">
+			</form>
+		</div>
+		<div class="content">
+			<div id="debt">
+			</div>
+			<div id="graphs">
+			</div>
+			<div id="transactions">
+			</div>
+		</div>
+	</body>
+</html>
