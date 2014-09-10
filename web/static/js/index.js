@@ -1,3 +1,6 @@
+var users, graph, history;
+var rowsShown = 0;
+
 function listTransactions(transactions) {
 
 	// one placeholder row for a new one
@@ -19,12 +22,9 @@ function login() {
 
 	$("#login").fadeTo(300, 0);
 
-	// Load transaction information
-	var transactions, graphs;
-	$.get("/transactions/json", function (data) { transactions = data; });
-	console.log(transactions);
-	$.get("/graph/json", function (data) { graphs=data; });
-	console.log(graphs);
+	$.get("/users/json", null, function (data) { users = JSON.parse(data); });
+	$.get("/transactions/json", null, function (data) { transactions = JSON.parse(data); });
+	$.get("/graph/json", null, function (data) { graph = JSON.parse(data); });
 
 	setTimeout(showContent, 300);
 }
@@ -39,19 +39,23 @@ function register() {
 	};
 	$.post("/users/new", user, function (data) {console.log(data);});
 
-	// Load transaction information
-	var transactions, graphs;
-	$.get("/transactions/json", function (data) { transactions = data; });
-	console.log(transactions);
-	$.get("/graph/json", function (data) { graphs=data; });
-	console.log(graphs);
+	$.get("/users/json", null, function (data) { users = JSON.parse(data); });
+	$.get("/transactions/json", null, function (data) { transactions = JSON.parse(data); });
+	$.get("/graph/json", null, function (data) { graph = JSON.parse(data); });
 
 	setTimeout(showContent, 300);
 }
 
+function expand() {
+	rowsShown += 5;
+	var height = $('#transactions').height();
+	$('#transactions').height(height + 50);
+}
+
 function showContent() {
-	$('#login').toggleClass('hidden');
+	$('#user').toggleClass('hidden');
 	$('#content').toggleClass('hidden');
+	$('#expand').click(expand);
 }
 
 function newTransaction() {
