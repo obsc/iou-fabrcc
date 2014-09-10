@@ -4,18 +4,41 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"html/template"
 	"net/http"
+	"path/filepath"
 	"strconv"
 )
 
+const STATIC_DIR = "web/static"
+const TEMPLATE_DIR = "web/templates"
+
+var TEMPLATE_LIST = []string{"index.html"}
+
 type WebApp struct {
-	Router *mux.Router
+	Router      *mux.Router
+	StaticDir   string
+	TemplateDir string
+	Templates   map[string]*template.Template
+}
+
+func parseTemplates() map[string]*template.Template {
+	templates := make(map[string]*template.Template)
+
+	for _, filename := range TEMPLATE_LIST {
+		templates[filename] = template.Must(
+			template.ParseFiles(filepath.Join(TEMPLATE_DIR, filename)))
+	}
+
+	return templates
 }
 
 func newWebApp() *WebApp {
 	app := &WebApp{
-		Router: mux.NewRouter(),
-	}
+		Router:      mux.NewRouter(),
+		StaticDir:   STATIC_DIR,
+		TemplateDir: TEMPLATE_DIR,
+		Templates:   parseTemplates()}
 	return app
 }
 
@@ -53,5 +76,7 @@ func printJson(w http.ResponseWriter, data interface{}) {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Hello World")
+	tmpl := App.Templates["index.html"]
+
+	tmpl.Execute(w, nil)
 }

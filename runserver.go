@@ -20,7 +20,14 @@ func main() {
 	web.App.SetRoutes()
 	http.Handle("/", web.App)
 
-	listen(PORT)
+	http.Handle("/static/",
+		http.StripPrefix("/static/", http.FileServer(http.Dir(web.App.StaticDir))))
+
+	log.Println("Starting server on: ", PORT)
+	err := http.ListenAndServe(PORT, nil)
+	if err != nil {
+		log.Fatal("An error occured when trying to start server: \n", err)
+	}
 }
 
 func initVars() {
@@ -36,13 +43,5 @@ func initVars() {
 		db.InitRoom(DEFAULT_URI)
 	} else {
 		db.InitRoom(os.Getenv("MONGOHQ_URL"))
-	}
-}
-
-func listen(port string) {
-	log.Println("Starting server on: ", PORT)
-	err := http.ListenAndServe(PORT, nil)
-	if err != nil {
-		log.Fatal("An error occured when trying to start server: \n", err)
 	}
 }
