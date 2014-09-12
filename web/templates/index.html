@@ -3,7 +3,9 @@
 	<head>
 		<title>FABRCC</title>
 		<link rel="stylesheet" href="/static/css/index.css" type="text/css"/>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+		<script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
 		<script src="/static/js/index.js"></script>
 	</head>
 	<body>
@@ -23,17 +25,16 @@
 			<div id="graph">
 			</div>
 			<div id="add">
-				<!--
 				<form id="transaction" onSubmit="return false;">
-					<label for="username">Username: </label>
-					<input id="username" class="field" >
-					<br>
-					<label for="password">Password: </label>
-					<input id="password" class="field" type="password">
-					<br>
-					<input id="login_btn" type="submit" value="Login" onClick="login()">
-					<input id="register_btn" type="submit" value="Register" onClick="register()">-->
-			</form>
+					<input id="source" class="field" >
+					owes
+					<input id="sink" class="field">
+					$
+					<input id="amount" class="field">
+					beacuse
+					<input id="reason" class="field">
+					<input id="trans_btn" type="submit" value="Submit" onClick="newTransaction()">
+				</form>
 			</div>
 			<div id="transactions">
 			</div>
