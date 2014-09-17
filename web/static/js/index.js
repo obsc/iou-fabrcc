@@ -1,6 +1,10 @@
 var userMap, graph, history;
 var rowsShown = 0;
 
+$.get("/users/json", null, function (data) { mapSetup(JSON.parse(data)); });
+$.get("/transactions/json", null, function (data) { transactions = JSON.parse(data); });
+$.get("/graph/json", null, function (data) { graph = JSON.parse(data); });
+
 function listTransactions(transactions) {
 
 	// one placeholder row for a new one
@@ -18,6 +22,7 @@ function listTransactions(transactions) {
 }
 
 function mapSetup(users) {
+	console.log(users);
 	userMap = {};
 	users.forEach( function(user) {
 		userMap[user.Name] = user.UserId;
@@ -33,33 +38,19 @@ function mapSetup(users) {
 	});
 }
 
-// Login Menu functions
-function login() {
-
-	$("#login").fadeTo(300, 0);
-
-	$.get("/users/json", null, function (data) { mapSetup(JSON.parse(data)); });
-	$.get("/transactions/json", null, function (data) { transactions = JSON.parse(data); console.log(transactions); });
-	$.get("/graph/json", null, function (data) { graph = JSON.parse(data); });
-
-	setTimeout(showContent, 300);
-}
-
 function register() {
-
-	$("#login").fadeTo(300, 0);
 
 	// POST new user info
 	user = {
 		name : $("#username").val()
 	};
+
 	$.post("/users/new", user, function (data) {console.log(data);});
 
 	$.get("/users/json", null, function (data) { mapSetup(JSON.parse(data)); });
 	$.get("/transactions/json", null, function (data) { transactions = JSON.parse(data); });
 	$.get("/graph/json", null, function (data) { graph = JSON.parse(data); });
 
-	setTimeout(showContent, 300);
 }
 
 function expand() {
@@ -81,7 +72,7 @@ function newTransaction() {
 	transaction = {
 		source : userMap[$('#source').val()],
 		sink : userMap[$('#sink').val()],
-		value : +($('#amount').val()),
+		value : (+($('#amount').val())) * 100,
 		reason : $('#reason').val()
 	};
 	$.post("/transactions/new", transaction);

@@ -1,7 +1,65 @@
 body {
 	margin: 0;
-	padding: 0 200px;
 	background-color: #FFFFD1;
+}
+
+nav.navbar.navbar-default {
+	padding: 0 0 0 200px;
+}
+
+#network-search {
+	width: 80%;
+}
+#network-search .form-group {
+	width: 80%;
+}
+#network-search .form-group input {
+	width: 100%;
+}
+
+ul.dropdown-menu {
+	padding: 0.5em;
+	margin-right: auto;
+	margin-left: auto;
+	text-align: center;
+}
+ul.dropdown-menu input {
+	margin-top: 0.2em;
+	padding: 3px 12px;
+	height: 2em;
+}
+ul.dropdown-menu button {
+	display: inline-block;
+	margin-top: 0.4em;
+	padding: 3px 12px;
+}
+
+#main {
+	width: auto;
+}
+
+#add {
+	float: left;
+	width: 195px;
+	padding: 0.5em;
+}
+#add .form-group {
+	margin-bottom: 5px;
+}
+#add .form-group input {
+	padding: 3px 12px;
+	height: 2em;
+}
+#add button {
+	padding: 3px 12px;
+	float: right;
+}
+
+#content {
+	width: auto;
+	margin: 0 200px;
+	height: 20em;
+	background-color: yellow;
 }
 
 .hidden {
@@ -22,7 +80,7 @@ body {
 #login input.field {
 	width: 10em;
 }
-
+/*
 #content {
 	background-color: yellow;
 	width: 100%;
@@ -30,7 +88,7 @@ body {
 	overflow-y: auto;
 	padding: 1em 1.5em;
 }
-
+*/
 #graph {
 	width: 100%;
 	height: 20em;
